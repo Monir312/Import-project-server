@@ -39,9 +39,6 @@ async function run() {
     const importsCollection = db.collection('imports');
     const exportsCollection = db.collection('exports');
 
-    /** =======================
-     * USERS ROUTES
-     * ======================= */
     app.post('/users', async (req, res) => {
       const { email } = req.body;
       if (!email) return res.status(400).send({ message: 'Email is required' });
@@ -58,9 +55,7 @@ async function run() {
       res.send(users);
     });
 
-    /** =======================
-     * PRODUCTS ROUTES
-     * ======================= */
+
     app.post('/products', async (req, res) => {
       try {
         const { productName, description, price, availableQuantity, pictureURL, sellerName, rating, subCategory, originCountry } = req.body;
@@ -114,9 +109,6 @@ async function run() {
       }
     });
 
-    /** =======================
-     * IMPORTS ROUTES
-     * ======================= */
     app.post('/imports', async (req, res) => {
       try {
         const { productId, importedQuantity, userEmail } = req.body;
@@ -179,10 +171,6 @@ async function run() {
       }
     });
 
-    /** =======================
-     * EXPORTS ROUTES (Fixed)
-     * ======================= */
-    // Add export product
      // Add export
     app.post('/exports', async (req, res) => {
       try {
@@ -218,7 +206,6 @@ async function run() {
       }
     });
 
-    // Get logged-in user's exports
     app.get('/exports', async (req, res) => {
       try {
         const userEmail = req.query.userEmail;
@@ -232,13 +219,18 @@ async function run() {
       }
     });
 
-    // Update export
-    app.put('/exports/:id', async (req, res) => {
+
+
+    app.put("/exports/:id", async (req, res) => {
       try {
+        const { id } = req.params;
+        const { _id, ...updateData } = req.body;
+
         const result = await exportsCollection.updateOne(
-          { _id: new ObjectId(req.params.id) },
-          { $set: req.body }
+          { _id: new ObjectId(id) },
+          { $set: updateData }
         );
+
         res.send(result);
       } catch (error) {
         console.error(error);
@@ -246,7 +238,6 @@ async function run() {
       }
     });
 
-    // Delete export
     app.delete('/exports/:id', async (req, res) => {
       try {
         const result = await exportsCollection.deleteOne({ _id: new ObjectId(req.params.id) });
