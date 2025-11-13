@@ -30,6 +30,8 @@ app.get('/', (req, res) => {
   res.send('Food & Beverage Trade Hub server is running');
 });
 
+
+
 async function run() {
   try {
     await client.connect();
@@ -80,6 +82,24 @@ async function run() {
         .toArray();
       res.send(latestProducts);
     });
+
+
+    //
+    app.get('/products/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) };
+    const product = await productsCollection.findOne(query);
+    if (!product) {
+      return res.status(404).send({ message: 'Product not found' });
+    }
+    res.send(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: 'Server error' });
+  }
+});
+
 
     // Add new product (Add Export)
     app.post('/products', async (req, res) => {
